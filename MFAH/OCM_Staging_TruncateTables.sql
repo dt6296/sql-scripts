@@ -1,0 +1,18 @@
+
+
+TRUNCATE TABLE ObjectCollection
+DELETE FROM Collection
+TRUNCATE TABLE ObjectMaker
+DELETE FROM ConstituentName
+DELETE FROM Constituent
+
+TRUNCATE TABLE Department
+TRUNCATE TABLE Location
+
+TRUNCATE TABLE ObjectGeography
+TRUNCATE TABLE ObjectImage
+TRUNCATE TABLE ObjectLocation
+TRUNCATE TABLE ObjectTitle
+
+DELETE FROM Object
+TRUNCATE TABLE RelatedObject

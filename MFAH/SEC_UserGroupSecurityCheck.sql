@@ -1,0 +1,28 @@
+
+
+
+
+
+SELECT * FROM Users WHERE IsDisabled = 1 ORDER BY Login
+
+
+
+SELECT * FROM SecurityGroups WHERE SecurityGroupID BETWEEN 11 AND 68
+
+
+SELECT * FROM Users WHERE UserID IN 
+(
+	SELECT DISTINCT UserID FROM UserSecurity WHERE SecurityGroupID BETWEEN 11 AND 68
+)
+
+
+SELECT * FROM SecurityGroups WHERE SecurityGroupID IN(114,109,63,62,115,121)
+ORDER BY SecurityGroup
+
+
+
+SELECT * FROM Users WHERE UserID IN 
+(
+	SELECT DISTINCT UserID FROM UserSecurity WHERE SecurityGroupID IN(114,109,63,62,115,121)
+)
+

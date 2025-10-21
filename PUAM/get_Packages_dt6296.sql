@@ -1,0 +1,1 @@
+select * from Packages where PackageType = 1 and LoginID = 'dt6296'

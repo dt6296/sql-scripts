@@ -1,0 +1,1 @@
+Select * from MediaProcessFailuresWhere ModifiedDate < '2019-10-01'Select MediaMasterID, Count(MediaMasterID) as TimesFoundFrom MediaProcessFailuresGroup By MediaMasterID Having Count(MediaMasterID) > 1
