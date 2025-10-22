@@ -35,12 +35,6 @@ where ObjectNumber = 'NBGP-003'
 
 
 
-select * from PUAMt_Insert_Provenance_251016_AAA as p
-inner join PackageList as pl on p.ObjectID = pl.ID and pl.TableID = 108 and pl.PackageID = 263608 -- 517
-
-
-select * from PUAMt_Insert_Provenance_251016_AsianArt as p
-inner join Objects as o on p.ObjectNumber = o.ObjectNumber -- 300
 
 
 
@@ -169,11 +163,57 @@ where p.ObjectID = 142671
 select * from TextEntries where TableID = 108 and ID = 142671
 
 
-
+-------------------------------------------------------------------------------------------------------------------
 -------------------------------------------   PROD SYSTEM   -------------------------------------------------------
--- These are the Insert statements!
 -------------------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------------------------------
+-- record counts
+
+
+select * from PUAMt_Insert_Provenance_251016_AAA as p
+inner join PackageList as pl on p.ObjectID = pl.ID and pl.TableID = 108 and pl.PackageID = 263608 -- 517
+
+
+select * from PUAMt_Insert_Provenance_251016_AsianArt as p
+inner join Objects as o on p.ObjectNumber = o.ObjectNumber -- 300
+
+
+-------------------------------------------------------------------------------------------------------------------
+-- check to see if any of the records already have provenance text entries
+
+select * from TextTypes where TextTypeID = 21		--	Curatorial Notes
+select * from TextStatuses where TextStatusID = 7	--	OnLine
+
+select te.* from TextEntries as te
+where te.TableID = 108
+and te.TextTypeID = 21	-- Curatorial Notes
+and te.TextStatusID = 7	-- Online
+and te.Purpose = 'Provenance'
+and te.ID in
+(
+	select ObjectID from PUAMt_Insert_Provenance_251016_AAA as p
+	inner join PackageList as pl on p.ObjectID = pl.ID and pl.TableID = 108 and pl.PackageID = 263608 -- 517
+) -- 0
+
+
+select te.* from TextEntries as te
+where te.TableID = 108
+and te.TextTypeID = 21	-- Curatorial Notes
+and te.TextStatusID = 7	-- Online
+and te.Purpose = 'Provenance'
+and te.ID in
+(
+	select ObjectID from PUAMt_Insert_Provenance_251016_AsianArt as p
+	inner join Objects as o on p.ObjectNumber = o.ObjectNumber -- 300
+) -- 0
+
+
+select ConstituentID, DisplayName from Constituents where ConstituentID in (23431,23451)
+
+ConstituentID	DisplayName
+23431			MaryKate Cleary
+23451			Shing-Kwan Chan
 
 
 --insert into TextEntries(ID,TableID,TextTypeID,TextStatusID,Purpose,TextEntry,TextEntryHTML,TextDate,AuthorConID)
@@ -190,12 +230,16 @@ select
 ,23431 as AuthorConID -- MaryKate Cleary
 from PUAMt_Insert_Provenance_251016_AAA as p
 
+--	(517 rows affected)		Completion time: 2025-10-22T12:07:08.3719654-04:00
+
+
+
 
 
 --insert into TextEntries(ID,TableID,TextTypeID,TextStatusID,Purpose,TextEntry,TextEntryHTML,TextDate,AuthorConID)
 
 select 
- p.ObjectID as ID
+ o.ObjectID as ID
 ,108 as TableID
 ,21 as TextTypeID
 ,7 as TextStatusID
@@ -205,3 +249,7 @@ select
 ,'2025-10-13' as TextDate
 ,23451 as AuthorConID -- Shing-Kwan Chan
 from PUAMt_Insert_Provenance_251016_AsianArt as p
+inner join [Objects] as o on p.ObjectNumber = o.ObjectNumber
+
+--(300 rows affected)	Completion time: 2025-10-22T12:08:36.2576387-04:00
+
