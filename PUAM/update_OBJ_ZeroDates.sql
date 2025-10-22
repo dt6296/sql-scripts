@@ -5,19 +5,20 @@
 ---------------------------------------------------------------------------------------------------------------
 
 select
- o.ObjectNumber
+ o.ObjectID
+,o.ObjectNumber
 ,o.SortNumber
 ,o.DateBegin
 ,o.DateEnd
 ,o.BeginISODate
 ,o.EndISODate
 
-into tPUAM_Objects_Dates_BackUp_250911
+into PUAMt_Objects_Dates_BackUp_251022
 
 from [Objects] as o
 
 
--- (132676 rows affected)   Completion time: 2025-09-11T09:12:25.7927626-04:00
+-- (135909 rows affected)   Completion time: 2025-10-22T11:18:45.3358024-04:00
 
 
 
@@ -58,6 +59,7 @@ from AuditTrail
 where TableName = 'Objects'
 and ColumnName = 'DateBegin'
 and EnteredDate > '2024-09-18'
+--  1179 rows
 
 
 select distinct
@@ -66,9 +68,7 @@ from AuditTrail
 where TableName = 'Objects'
 and ColumnName = 'DateEnd'
 and EnteredDate > '2024-09-18'
-
-
-
+-- 1179 rows
 
 
 
@@ -290,6 +290,7 @@ SET BeginISODate =
             AS VARCHAR), 11)
 --WHERE ObjectID = 142671;
 
+
 ---------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
 
@@ -472,16 +473,26 @@ where o.ObjectID not in
     and ColumnName = 'DateEnd'
     and EnteredDate > '2024-09-18'
 )
-
 ---------------------------------------------------------------------------------------------------------------
+-- These are the UPDATEs to use. There's one for Begin dates and one for End dates.
+---------------------------------------------------------------------------------------------------------------
+
 -- UPDATE DateBegin, BeginISODate
 
+/*
+select count(*) from PUAMt_Objects_Dates_ZeroUpdate -- 6229
 
+select o.ObjectID, o.DateBegin, o.BeginISODate 
+from Objects as o
+inner join PUAMt_Objects_Dates_ZeroUpdate as z on o.ObjectID = z.ObjectID
+
+select * from PUAMt_Objects_Dates_BackUp_251022
+*/
 
 --update [Objects]
 
-set 
- DateBegin = z.DateBegin
+set --select
+ DateBegin = isnull(z.DateBegin,0) 
 ,BeginISODate = RIGHT('00000000000' + 
     CAST(
         CASE 
@@ -491,7 +502,7 @@ set
     AS VARCHAR), 11)
 
 from [Objects] as o
-inner join tPUAM_Objects_Dates_ZeroUpdate as z on o.ObjectID = z.ObjectID
+inner join PUAMt_Objects_Dates_ZeroUpdate as z on o.ObjectID = z.ObjectID
 
 where o.ObjectID not in
 (
@@ -503,7 +514,7 @@ where o.ObjectID not in
     and EnteredDate > '2024-09-18'
 )
 
-
+--  (6140 rows affected)    Completion time: 2025-10-22T11:41:24.0578473-04:00
 
 ---------------------------------------------------------------------------------------------------------------
 -- UPDATE DateEnd, EndISODate
@@ -512,8 +523,8 @@ where o.ObjectID not in
 
 --update [Objects]
 
-set 
- DateEnd = z.DateEnd
+set --select
+ DateEnd = isnull(z.DateEnd,0)
 ,EndISODate = RIGHT('00000000000' + 
     CAST(
         CASE 
@@ -523,7 +534,7 @@ set
     AS VARCHAR), 11)
 
 from [Objects] as o
-inner join tPUAM_Objects_Dates_ZeroUpdate as z on o.ObjectID = z.ObjectID
+inner join PUAMt_Objects_Dates_ZeroUpdate as z on o.ObjectID = z.ObjectID
 
 where o.ObjectID not in
 (
@@ -535,7 +546,7 @@ where o.ObjectID not in
     and EnteredDate > '2024-09-18'
 )
 
-
+--  (6140 rows affected)    Completion time: 2025-10-22T11:42:22.7405238-04:00
 
 
 
@@ -543,7 +554,7 @@ where o.ObjectID not in
 ---------------------------------------------------------------------------------------------------------------
 -- create QC list
 
-select count(*) from tPUAM_Objects_Dates_ZeroUpdate
+select count(*) from PUAMt_Objects_Dates_ZeroUpdate
 
 
 select
@@ -596,10 +607,7 @@ select
     AS VARCHAR), 11)    AS EndISODate_NEW
 
 from [Objects] as o
-inner join [dbo].[tPUAM_OBJ_Dates_ZeroUpdate] as z on o.ObjectID = z.ObjectID
-
-
-
+inner join [dbo].[PUAMt_Objects_Dates_ZeroUpdate] as z on o.ObjectID = z.ObjectID
 
 ---------------------------------------------------------------------------------------------------------------
 where
