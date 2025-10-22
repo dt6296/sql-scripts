@@ -48,7 +48,7 @@ select ObjectID from PUAMt_Insert_Provenance_251016_AsianArt as p
 inner join Objects as o on p.ObjectNumber = o.ObjectNumber -- 300
 
 
-select * from textTypes where TableID = 108 -- 21 Curatorial Notes
+select * from textTypes where TableID = 108 -- 21 Curatorial Notes >> 29 Online
 
 select * from TextStatuses -- 7	OnLine
 
@@ -253,3 +253,54 @@ inner join [Objects] as o on p.ObjectNumber = o.ObjectNumber
 
 --(300 rows affected)	Completion time: 2025-10-22T12:08:36.2576387-04:00
 
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+-- CORRECTION
+
+
+select top 1000 * from TextEntries order by EnteredDate desc
+
+select * from TextEntries where LoginID = 'princeton\dt6296'
+
+
+select * from TextTypes where TableID = 108 -- 29	Online
+select distinct Purpose from TextEntries where TableID = 108 -- Provenance
+select * from TextStatuses -- 0 (not assigned)
+
+
+select
+*
+from TextEntries as te
+where LoginID = 'princeton\dt6296'
+
+--update TextEntries
+set TextTypeID = 29, TextStatusID = 0 -- select * from TextEntries
+where LoginID = 'princeton\dt6296'
+and TextTypeID = 21 and TextStatusID = 7
+
+--	(817 rows affected)		Completion time: 2025-10-22T13:36:14.0777772-04:00
+
+
+
+
+select te.* 
+from TextEntries as te
+where te.TextTypeID = 29
+and te.TableID = 108
+and te.ID in (select ID from TextEntries where LoginID = 'princeton\dt6296')
+and te.TextDate <> '2025-10-13'
+and te.Purpose = 'Provenance'
+
+
+--update TextEntries
+set TextTypeID = 21 -- Curatorial Notes -- select * from TextEntries as te
+where TextTypeID = 29
+and TableID = 108
+and ID in (select ID from TextEntries where LoginID = 'princeton\dt6296')
+and TextDate <> '2025-10-13'
+and Purpose = 'Provenance'
+
+--	(6 rows affected)		Completion time: 2025-10-22T13:55:34.6498555-04:00
