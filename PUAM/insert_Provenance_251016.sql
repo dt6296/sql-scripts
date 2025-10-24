@@ -304,3 +304,49 @@ and TextDate <> '2025-10-13'
 and Purpose = 'Provenance'
 
 --	(6 rows affected)		Completion time: 2025-10-22T13:55:34.6498555-04:00
+
+
+--------------------------------------------------------------------------------------------------- 10/24/2025 American Art
+
+select * from PUAMt_Insert_Provenance_251024_American as p
+inner join Objects as o on p.ObjectID = o.ObjectID -- 216
+
+select * from PUAMt_Insert_Provenance_251024_American as p
+left outer join Objects as o on p.ObjectID = o.ObjectID
+where o.ObjectID is null -- 0
+
+
+select * from TextTypes where TableID = 108 -- 29	108	Online
+select * from TextStatuses -- 0	(not assigned)
+Purpose = Provenance
+
+
+
+select te.* 
+from TextEntries as te
+where te.TableID = 108
+and te.TextTypeID = 29	-- Online
+and te.TextStatusID = 0	-- (not assigned)
+and te.Purpose = 'Provenance'
+and te.ID in
+(
+	select p.ObjectID from PUAMt_Insert_Provenance_251024_American as p
+	inner join Objects as o on p.ObjectID = o.ObjectID 
+) -- 95, 94 of which were just inserted two days ago.
+
+
+
+select * from PUAMt_Insert_Provenance_251024_American as american
+inner join PUAMt_Insert_Provenance_251016_AAA as ancient
+on american.ObjectID = ancient.ObjectID
+
+
+select am.ObjectID, am.ObjectNumber, am.Provenance as Provenance_American, aaa.Provenance as Provenance_AAA 
+,case when am.Provenance = aaa.Provenance then 1 else 0 end as IsSame
+from PUAMt_Insert_Provenance_251024_American as am
+inner join PUAMt_Insert_Provenance_251016_AAA as aaa
+on am.ObjectID = aaa.ObjectID
+
+
+
+
